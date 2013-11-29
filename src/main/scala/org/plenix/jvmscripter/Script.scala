@@ -42,63 +42,48 @@ object Languages {
   lazy val languageInfos = languages.map(new LanguageInfo(_))
   def languageInfoFor(name: String) = languageInfos.find(_.name == name)
 
+  import org.plenix.util.ResourceUtils.loadResource
   lazy val javascript = Language(
     name = "javascript",
     description = "Javascript (Rhino)",
     syntax = "javascript",
     extension = "js",
     version = "1.7R4",
-    initScript = initScript("init.js"))
+    initScript = loadResource("init.js"))
   lazy val groovy = Language(
     name = "groovy",
     description = "Groovy",
     syntax = "groovy",
     extension = "groovy",
     version = "2.1.7",
-    initScript = initScript("init.groovy"))
+    initScript = loadResource("init.groovy"))
   lazy val bsf = Language(
     name = "bsh",
     description = "BeanShell (Java)",
     syntax = "java",
     extension = "bsh",
     version = "2.2.0-rc-3",
-    initScript = initScript("init.bsh"))
+    initScript = loadResource("init.bsh"))
   lazy val jruby = Language(
     name = "jruby",
     description = "JRuby",
     syntax = "ruby",
     extension = "rb",
     version = "1.7.8",
-    initScript = initScript("jruby.rb"))
+    initScript = loadResource("jruby.rb"))
   lazy val jython = Language(
     name = "jython",
     description = "Jython",
     syntax = "python",
     extension = "py",
     version = "2.7-b1",
-    initScript = initScript("jython.py"))
+    initScript = loadResource("jython.py"))
   lazy val scala = Language(
     name = "scala",
     description = "Scala",
     syntax = "scala",
     extension = "scala",
     version = "2.11.0-M6")
-
-  def initScript(name: String) = {
-    val resourceName = s"initScript/${name}"
-    val classLoader = getClass.getClassLoader
-    val is = classLoader.getResourceAsStream(resourceName)
-    Option(is).map { is =>
-      val buffer = new Array[Byte](4096)
-      val baos = new java.io.ByteArrayOutputStream
-      Iterator.
-        continually(is.read(buffer)).
-        takeWhile(_ != -1).
-        filter(_ > 0).
-        foreach(baos.write(buffer, 0, _))
-      baos.toString
-    }
-  }
 }
 
 case class ScripterInfo(id: String, languageName: String)
