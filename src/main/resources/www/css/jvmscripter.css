@@ -1,0 +1,16 @@
+body {
+    font-family: Verdana;
+    font-size: 12px;
+}
+
+a:link {
+    color: blue;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: blue;
+    text-decoration: underline;
+}
+
+.ace_editor { height: 400px; }

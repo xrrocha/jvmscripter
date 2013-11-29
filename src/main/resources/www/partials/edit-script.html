@@ -1,0 +1,21 @@
+<p>Edit script {{scripterId}}</p>
+<div data-ng-model="scriptText"
+	ui-ace="{
+  useWrapMode : true,
+  showGutter: true,
+  theme:'chrome',
+  mode: '{{language.syntax}}',
+  onLoad: aceLoaded
+}"></div>
+<div style="height: 32px; padding-top: 12px;">
+	<button data-ng-click="executeScript()" style="float: left">Execute
+		Script</button>
+	<button data-ng-click="deleteScript()" style="float: right">Delete
+		Script</button>
+</div>
+<hr>
+<!--  TODO: Add to scrolling textarea -->
+<div>
+	<pre>{{scriptResult.output}}
+{{scriptResult.error.message}}{{scriptResult.value}}</pre>
+</div>

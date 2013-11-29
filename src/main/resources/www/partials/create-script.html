@@ -1,0 +1,14 @@
+<div data-ng-show="scripters.length > 0">
+    <p>Click on an existing script session</p>
+    <ul>
+        <li data-ng-repeat="scripter in scripters">
+            <a href="" data-ng-click="editScript(scripter)">Script #{{scripter.id}} ({{scripter.languageName}})</a>
+        </li>
+    </ul>
+</div>
+<p>Please select the scripting language for this session</p>
+<div>
+  <select data-ng-model="language" data-ng-options="language.description for language in languages">
+  </select>
+  <button data-ng-click="createScript()">Create Script</button>
+</div>
