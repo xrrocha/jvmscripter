@@ -36,54 +36,60 @@ case class LanguageInfo(name: String, description: String, syntax: String, exten
 }
 
 object Languages {
-  lazy val languages = Seq(javascript, groovy, bsf/*, jruby, jython, scala*/ )
+  lazy val languages = Seq(javascript, groovy, bsf /*, jruby, jython, scala*/ )
   def languageFor(name: String) = languages.find(_.name == name)
 
   lazy val languageInfos = languages.map(new LanguageInfo(_))
   def languageInfoFor(name: String) = languageInfos.find(_.name == name)
 
-  import org.plenix.util.ResourceUtils.loadResource
   lazy val javascript = Language(
     name = "javascript",
     description = "Javascript (Rhino)",
     syntax = "javascript",
     extension = "js",
     version = "1.7R4",
-    initScript = loadResource("init.js"))
+    initScript = loadInitScript("js"))
   lazy val groovy = Language(
     name = "groovy",
     description = "Groovy",
     syntax = "groovy",
     extension = "groovy",
     version = "2.1.7",
-    initScript = loadResource("init.groovy"))
+    initScript = loadInitScript("groovy"))
   lazy val bsf = Language(
     name = "bsh",
     description = "BeanShell (Java)",
     syntax = "java",
     extension = "bsh",
     version = "2.2.0-rc-3",
-    initScript = loadResource("init.bsh"))
+    initScript = loadInitScript("bsh"))
   lazy val jruby = Language(
     name = "jruby",
     description = "JRuby",
     syntax = "ruby",
     extension = "rb",
     version = "1.7.8",
-    initScript = loadResource("jruby.rb"))
+    initScript = loadInitScript("rb"))
   lazy val jython = Language(
     name = "jython",
     description = "Jython",
     syntax = "python",
     extension = "py",
     version = "2.7-b1",
-    initScript = loadResource("jython.py"))
+    initScript = loadInitScript("py"))
   lazy val scala = Language(
     name = "scala",
     description = "Scala",
     syntax = "scala",
     extension = "scala",
-    version = "2.11.0-M6")
+    version = "2.11.0-M6",
+    initScript = loadInitScript("scala"))
+
+  def loadInitScript(extension: String) = {
+    import org.plenix.util.ResourceUtils.loadResource
+    loadResource(s"initScript/init.${extension}")
+  }
+
 }
 
 case class ScripterInfo(id: String, languageName: String)
