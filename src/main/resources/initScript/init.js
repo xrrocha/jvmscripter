@@ -8,7 +8,7 @@ importPackage(javax.servlet.http);
 
 function load(location) {
     var url;
-    if (location.indexOf(':/') > 0) new URL(location);
+    if (location.indexOf(':/') > 0) url= new URL(location);
     else url = url = new File(location).toURI().toURL();
     var br = new BufferedReader(new InputStreamReader(url.openStream()));
     var script = new StringBuilder();
