@@ -29,3 +29,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-log4j12" % "1.7.5" ,//% "provided",
   "org.scalatest" %% "scalatest" % "2.0" % "test"
 )
+
+initialCommands in console := """
+    |import org.plenix.jvmscripter._
+    |""".stripMargin
