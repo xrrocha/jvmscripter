@@ -23,7 +23,7 @@ case class Language(
   syntax: String,
   extension: String,
   version: String,
-  initScript: Option[String] = None,
+  initScripts: Seq[String] = Seq(),
   preprocessor: Option[ScriptEnginePreprocessor] = None)
 
 case class LanguageInfo(name: String, description: String, syntax: String, extension: String, version: String) {
@@ -48,48 +48,47 @@ object Languages {
     syntax = "javascript",
     extension = "js",
     version = "1.7R4",
-    initScript = loadInitScript("js"))
+    initScripts = loadInitScripts("js"))
   lazy val groovy = Language(
     name = "groovy",
     description = "Groovy",
     syntax = "groovy",
     extension = "groovy",
     version = "2.1.7",
-    initScript = loadInitScript("groovy"))
+    initScripts = loadInitScripts("groovy"))
   lazy val bsf = Language(
     name = "bsh",
     description = "BeanShell (Java)",
     syntax = "java",
     extension = "bsh",
     version = "2.2.0-rc-3",
-    initScript = loadInitScript("bsh"))
+    initScripts = loadInitScripts("bsh"))
   lazy val jruby = Language(
     name = "jruby",
     description = "JRuby",
     syntax = "ruby",
     extension = "rb",
     version = "1.7.8",
-    initScript = loadInitScript("rb"))
+    initScripts = loadInitScripts("rb"))
   lazy val jython = Language(
     name = "jython",
     description = "Jython",
     syntax = "python",
     extension = "py",
     version = "2.7-b1",
-    initScript = loadInitScript("py"))
+    initScripts = loadInitScripts("py"))
   lazy val scala = Language(
     name = "scala",
     description = "Scala",
     syntax = "scala",
     extension = "scala",
     version = "2.11.0-M6",
-    initScript = loadInitScript("scala"))
+    initScripts = loadInitScripts("scala"))
 
-  def loadInitScript(extension: String) = {
-    import org.plenix.util.ResourceUtils.loadResource
-    loadResource(s"initScript/init.${extension}")
+  def loadInitScripts(extension: String) = {
+    import org.plenix.util.ResourceUtils._
+    getResources(s"jvmscripter/init.${extension}").map(inputStream2String)
   }
-
 }
 
 case class ScripterInfo(id: String, languageName: String)
@@ -122,7 +121,7 @@ trait ScriptManager extends Logging {
       scriptContext.setBindings(engineBindings, ScriptContext.GLOBAL_SCOPE)
       engine.setContext(scriptContext)
       language.preprocessor.foreach(_.preprocessEngine(engine))
-      language.initScript.foreach(engine.eval(_))
+      language.initScripts.foreach(engine.eval(_))
       val scripter = Scripter(newId, language, engine)
       scripters += scripter.id -> scripter
       logger.debug(s"Created new scripter ${scripter.id}")
