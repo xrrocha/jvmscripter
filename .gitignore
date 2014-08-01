@@ -1,7 +1,4 @@
-/.settings
-/local
-/.cache
-/.classpath
-/.project
-/lib_managed
-/target
+.idea
+lib_managed
+local
+target

@@ -1,4 +1,4 @@
-package org.plenix.jvmscripter
+package xrrocha.jvmscripter
 
 import akka.actor.Actor
 import spray.httpx.SprayJsonSupport.sprayJsonMarshaller
