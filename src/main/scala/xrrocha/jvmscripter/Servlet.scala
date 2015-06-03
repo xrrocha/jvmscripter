@@ -4,14 +4,10 @@ import java.io.PrintWriter
 import javax.servlet.{Filter, FilterChain, FilterConfig, ServletContextEvent, ServletContextListener, ServletRequest, ServletResponse}
 import javax.servlet.http.{HttpServlet, HttpServletRequest, HttpServletResponse}
 
-import com.typesafe.scalalogging.Logging
-import com.typesafe.scalalogging.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.typesafe.scalalogging.LazyLogging
 
 // TODO Verify whether servlet support in JVMS is still needed
-class JVMScripterServletListener extends Logging with ServletContextListener {
-  val logger = Logger(LoggerFactory.getLogger(classOf[JVMScripterServletListener]))
-
+class JVMScripterServletListener extends LazyLogging with ServletContextListener {
   var server: Server = _
 
   val servletPath = "/jvmscripter/*"
@@ -46,7 +42,7 @@ class JVMScripterServletListener extends Logging with ServletContextListener {
       "servlet" -> servlet,
       "logger" -> logger.underlying)
 
-    logger.info(s"Creating and starting jvmscripter server on port ${portNumber}")
+    logger.info(s"Creating and starting jvmscripter server on port $portNumber")
     server = Server(bindings, portNumber)
     new Thread(new Runnable() { def run() { server.start() } }).start()
   }
@@ -56,56 +52,52 @@ class JVMScripterServletListener extends Logging with ServletContextListener {
   }
 }
 
-class JVMScripterServlet extends HttpServlet with Logging {
-  val logger = Logger(LoggerFactory.getLogger(classOf[JVMScripterServlet]))
-
+class JVMScripterServlet extends HttpServlet with LazyLogging {
   val delegates = collection.mutable.Map[String, FilterChain]()
 
   def add(path: String, delegate: FilterChain) {
-    logger.debug(s"Adding delegate: ${delegate}")
+    logger.debug(s"Adding delegate: $delegate")
     delegates += path -> delegate
   }
 
   def remove(path: String) {
-    logger.debug(s"Removing path: ${path}")
+    logger.debug(s"Removing path: $path")
     delegates -= path
   }
 
   override def service(request: HttpServletRequest, response: HttpServletResponse) {
-    val path = request.getPathInfo()
-    logger.debug(s"Servicing path: ${path}")
+    val path = request.getPathInfo
+    logger.debug(s"Servicing path: $path")
     if (path != null && path.length > 1) {
       try {
         delegates.get(path.substring(1)).foreach(_.doFilter(request, response))
       } catch {
         case e: Exception =>
-          e.printStackTrace(new PrintWriter(response.getWriter()))
+          e.printStackTrace(new PrintWriter(response.getWriter))
       }
     } else {
       logger.debug(s"No suitable delegate")
-      response.getWriter().println("No matching path: " + path)
+      response.getWriter.println("No matching path: " + path)
     }
-    response.getWriter().flush()
+    response.getWriter.flush()
   }
 }
 
-class JVMScripterServletFilter extends Logging with Filter {
-  val logger = Logger(LoggerFactory.getLogger(classOf[JVMScripterServletFilter]))
-
+class JVMScripterServletFilter extends LazyLogging with Filter {
   val delegates = collection.mutable.Map[String, FilterChain]()
 
   def add(name: String, delegate: FilterChain) {
-    logger.debug(s"Adding delegate: ${name}")
+    logger.debug(s"Adding delegate: $name")
     delegates += name -> delegate
   }
 
   def remove(name: String) {
-    logger.debug(s"Removing delegate: ${name}")
+    logger.debug(s"Removing delegate: $name")
     delegates -= name
   }
 
   override def init(filterConfig: FilterConfig) {
-    logger.info(s"init: ${filterConfig}")
+    logger.info(s"init: $filterConfig")
   }
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
